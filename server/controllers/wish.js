@@ -1,5 +1,5 @@
 const db = require('../db');
-const {handleErr, success} = require('../_helpers');
+const { handleErr, success } = require('../_helpers');
 
 exports.get = (req, res) => {
   const query = `
@@ -12,30 +12,43 @@ exports.get = (req, res) => {
 
     // Parse examples from string|pipe|separated to array
     if (wishes) {
-      wishes.forEach(wish => {
+      wishes.forEach((wish) => {
         wish.examples = wish.examples ? wish.examples.split('|') : [];
       });
     }
 
-    res.json(success(wishes ? wishes : []));
+    res.json(success(wishes || []));
   });
 };
 
 exports.add = (req, res) => {
-  const query = `
-    INSERT INTO wish (username, name, description, examples) 
-    VALUES (
-      '${req.params.username}', 
-      '${req.body.name}', 
-      '${req.body.description}', 
-      '${req.body.examples.join('|')}'
-    );
-  `;
+  function getAddedWishId() {
+    const query = 'SELECT last_insert_rowid() AS wish_id';
 
-  db.run(query, [], err => {
-    handleErr(res, err);
-    res.json(success());
-  });
+    db.get(query, [], (err, wishId) => {
+      handleErr(res, err);
+      res.json(success(wishId));
+    });
+  }
+
+  function addWish() {
+    const query = `
+      INSERT INTO wish (username, name, description, examples) 
+      VALUES (
+        '${req.params.username}', 
+        '${req.body.name}', 
+        '${req.body.description}', 
+        '${req.body.examples.join('|')}'
+      );
+    `;
+
+    db.run(query, [], (err) => {
+      handleErr(res, err);
+      getAddedWishId();
+    });
+  }
+
+  addWish();
 };
 
 exports.update = (req, res) => {
@@ -47,14 +60,16 @@ exports.update = (req, res) => {
     WHERE id = ${req.params.wish_id};
   `;
 
-  db.run(query, [], err => {
+  db.run(query, [], (err) => {
     handleErr(res, err);
     res.json(success());
   });
 };
 
 exports.destroy = (req, res) => {
-  db.run(`DELETE FROM wish WHERE id = ${req.params.wish_id};`, [], err => {
+  const query = `DELETE FROM wish WHERE id = ${req.params.wish_id};`;
+
+  db.run(query, [], (err) => {
     handleErr(res, err);
     res.json(success());
   });

@@ -1,32 +1,42 @@
-import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, ScrollView, View, Text} from 'react-native';
-import {TextInput, Button, Title} from 'react-native-paper';
-import {post} from './_helpers';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
+import { TextInput, Button, Title } from 'react-native-paper';
+import { post } from './_common/_helpers';
 
-const SignIn: () => React$Node = ({onSignIn}) => {
+const styles = StyleSheet.create({
+  title: {
+    textAlign: 'center',
+  },
+  error: {
+    textAlign: 'center',
+    color: 'red',
+  },
+});
+
+const SignIn: () => React$Node = ({ onSignIn }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState();
 
   return (
     <SafeAreaView>
-      <Title style={{textAlign: 'center'}}>Wishlist mobile</Title>
+      <Title style={styles.title}>Wishlist mobile</Title>
       <TextInput
         label="Nom d'utilisateur"
         value={username}
-        onChangeText={text => setUsername(text)}
+        onChangeText={(text) => setUsername(text)}
       />
       <TextInput
         label="Mot de passe"
-        secureTextEntry={true}
+        secureTextEntry
         value={password}
-        onChangeText={text => setPassword(text)}
+        onChangeText={(text) => setPassword(text)}
       />
       <Button
         disabled={!username || !password}
         onPress={() => {
           setError();
-          post('/user', {username, password}).then(res => {
+          post('/user', { username, password }).then((res) => {
             if (res.status === 'error') {
               setError(res.message);
             } else {
@@ -40,12 +50,5 @@ const SignIn: () => React$Node = ({onSignIn}) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  error: {
-    textAlign: 'center',
-    color: 'red',
-  },
-});
 
 export default SignIn;

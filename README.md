@@ -10,6 +10,7 @@ Small social media centered on gifts you make to your family/friends:
 This is a mobile app using React Native on the front-end and express for the back-end API. A web app using the same API + Vue.js might also come up later so stay tuned!
 
 Todo list:
+
 - [x] Install and setup react native
 - [x] First connection between the native app & the express API server
 - [x] Setup & first connection to an sqlite db
@@ -24,4 +25,9 @@ Todo list:
 - [x] More details on the wishlist listing
 - [x] Be able to update a gift onPress
 - [x] See how people do and try to have a decent server architecture
+- [x] Contexts for username / theme
+- [x] Generic List component + some front-end refactoring
 - [ ] And then... Moving to `Friends.js` I guess? :)
+
+- [ ] Integrate typescript?
+- [ ] Move from REST to GraphQL + get started with Apollo client!
