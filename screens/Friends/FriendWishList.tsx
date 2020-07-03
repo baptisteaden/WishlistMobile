@@ -5,10 +5,8 @@ export default ({ navigation, route }) => (
   <List
     navigation={navigation}
     route={route}
-    itemScreen="WishUpdate"
-    addItemScreen="WishAdd"
-    showAddButton
-    canDelete
-    deleteAlertMessage="Supprimer '$(itemName)' de votre liste ?"
+    itemScreen="WishConsult"
+    itemFetchUrl="/comment/"
+    itemPropInUrl="id"
   />
 );

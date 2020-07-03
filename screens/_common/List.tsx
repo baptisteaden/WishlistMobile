@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Alert, Text } from 'react-native';
 import {
   withTheme,
   List as PaperList,
+  Divider,
   ActivityIndicator,
   FAB,
 } from 'react-native-paper';
@@ -22,15 +23,23 @@ const styles = StyleSheet.create({
     bottom: 0,
     margin: 15,
   },
+  fetching: {
+    padding: 10,
+  },
 });
 
 const List: () => React$Node = ({
   navigation,
   route,
   theme,
-  updateItemScreen,
+  itemScreen,
   addItemScreen,
   showAddButton,
+  itemFetchUrl,
+  itemPropInUrl,
+  canDelete,
+  deleteAlertMessage,
+  itemDescriptionNumberOfLines,
 }) => {
   // ---------- States ---------- //
 
@@ -47,7 +56,6 @@ const List: () => React$Node = ({
   }, []);
 
   useEffect(() => {
-    console.log('useEffect', route.params.update);
     if (route.params.update) {
       const { itemIndex, itemData } = route.params.update;
       if (itemIndex) {
@@ -55,11 +63,9 @@ const List: () => React$Node = ({
         const newListData = [...listData];
         newListData[itemIndex] = itemData;
         setListData(newListData);
-        console.log('item updated!');
       } else {
         // Handle item addition
         setListData([...listData, itemData]);
-        console.log('item added!');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,8 +73,25 @@ const List: () => React$Node = ({
 
   // ---------- Handlers ---------- //
 
-  const handleItemDelete = (index) => () => {
-    destroy(`${fetchUrl}/${listData[index].id}`).then((res) => {
+  const handleItemPress = (disabled, index, listItem) => () => {
+    if (disabled) {
+      return;
+    }
+
+    navigation.navigate(itemScreen, {
+      index,
+      data: listItem,
+      fetchUrl: itemFetchUrl
+        ? itemFetchUrl + listItem[itemPropInUrl]
+        : fetchUrl,
+      title: route.params.navTitle
+        ? route.params.navTitle + listItem.name
+        : route.params.title,
+    });
+  };
+
+  const handleItemDelete = (index, itemId) => () => {
+    destroy(`${fetchUrl}/${itemId}`).then((res) => {
       if (res.status === 'error') {
         console.log(res.message);
         return Alert.alert('Oops', res.message);
@@ -79,38 +102,47 @@ const List: () => React$Node = ({
     });
   };
 
-  const deleteAlert = (index) => () => {
-    Alert.alert('Suppression', `Supprimer ${listData[index].name} ?`, [
-      { text: 'Annuler' },
-      { text: 'OK', onPress: handleItemDelete(index) },
-    ]);
+  const deleteAlert = (index, listItem) => () => {
+    Alert.alert(
+      'Suppression',
+      deleteAlertMessage.replace('$(itemName)', listItem.name),
+      [
+        { text: 'Annuler' },
+        { text: 'OK', onPress: handleItemDelete(index, listItem.id) },
+      ],
+    );
   };
 
   // ---------- Render ---------- //
 
+  if (route.params.title) {
+    navigation.setOptions({ title: route.params.title });
+  }
+
   let listComponent = null;
 
   if (listData == null) {
-    listComponent = <ActivityIndicator animating />;
+    listComponent = <ActivityIndicator animating style={styles.fetching} />;
   } else if (listData.length === 0) {
-    listComponent = (
-      <Text style={styles.p}>Votre liste est vide pour le moment</Text>
-    );
+    listComponent = <Text style={styles.p}>Liste vide, pour le moment !</Text>;
   } else {
-    listComponent = listData.map((listItem, index) => (
-      <PaperList.Item
-        key={listItem.id}
-        title={listItem.name}
-        description={listItem.description}
-        onLongPress={deleteAlert(index)}
-        onPress={() => {
-          navigation.navigate(updateItemScreen, {
-            index,
-            data: listItem,
-          });
-        }}
-      />
-    ));
+    listComponent = listData.map((listItem, index) => {
+      const _canDelete =
+        typeof canDelete === 'function' ? canDelete(listItem) : !!canDelete;
+
+      return (
+        <React.Fragment key={`${itemScreen}_item_${listItem.id}`}>
+          <PaperList.Item
+            title={listItem.name}
+            description={listItem.description}
+            onLongPress={_canDelete ? deleteAlert(index, listItem) : null}
+            onPress={handleItemPress(!itemScreen, index, listItem)}
+            descriptionNumberOfLines={itemDescriptionNumberOfLines || 2}
+          />
+          <Divider />
+        </React.Fragment>
+      );
+    });
   }
 
   return (

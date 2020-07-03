@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { UserContext } from '../_common/_helpers';
-import List from '../_common/List';
+import FriendList from './FriendList';
+import FriendWishList from './FriendWishList';
 import WishConsult from './WishConsult';
 
 const Stack = createStackNavigator();
@@ -15,12 +16,19 @@ const Friends: () => React$Node = () => {
       <Stack.Navigator>
         <Stack.Screen
           name="FriendList"
-          component={List}
-          initialParams={{ fetchUrl: `/friend/${username}` }}
+          component={FriendList}
+          initialParams={{
+            fetchUrl: `/friend/${username}`,
+            navTitle: 'Liste de ',
+          }}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="FriendWishList" component={List} />
-        <Stack.Screen name="WishConsult" component={WishConsult} />
+        <Stack.Screen name="FriendWishList" component={FriendWishList} />
+        <Stack.Screen
+          name="WishConsult"
+          component={WishConsult}
+          options={({ route }) => ({ title: route.params.title })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

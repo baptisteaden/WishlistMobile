@@ -3,17 +3,18 @@ const { handleErr, success } = require('../_helpers');
 
 exports.get = (req, res) => {
   const query = `
-    SELECT id, name, description, examples FROM wish 
+    SELECT id, name, description, examples, shoppers FROM wish 
     WHERE username = '${req.params.username}';
   `;
 
   db.all(query, (err, wishes) => {
     handleErr(res, err);
 
-    // Parse examples from string|pipe|separated to array
+    // Parse examples and shoppers from string|pipe|separated to array
     if (wishes) {
       wishes.forEach((wish) => {
         wish.examples = wish.examples ? wish.examples.split('|') : [];
+        wish.shoppers = wish.shoppers ? wish.shoppers.split('|') : [];
       });
     }
 

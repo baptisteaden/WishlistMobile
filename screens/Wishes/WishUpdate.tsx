@@ -1,13 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, View, Linking } from 'react-native';
-import {
-  withTheme,
-  TextInput,
-  Chip,
-  Button,
-  HelperText,
-} from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { TextInput, Button, HelperText } from 'react-native-paper';
 import { UserContext, put, post } from '../_common/_helpers';
+import UrlList from '../_common/UrlList';
 
 const styles = StyleSheet.create({
   form: {
@@ -29,29 +24,23 @@ const styles = StyleSheet.create({
   addExample: {
     height: 50,
   },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    textDecorationLine: 'underline',
-  },
 });
 
 type Props = {
   navigation: Navigation;
   route;
-  theme;
   onListItemUpdate;
 };
 
-const WishUpdate: () => React$Node = ({ navigation, route, theme }: Props) => {
+const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
   // ----- States ----- //
 
-  const { data, index, title } = route.params;
-  const [name, setName] = useState(data ? data.name : '');
-  const [description, setDescription] = useState(data ? data.description : '');
-  const [examples, setExamples] = useState(data ? data.examples : []);
+  const initData = route.params
+    ? route.params.data
+    : { name: '', description: '', examples: [] };
+  const [name, setName] = useState(initData.name);
+  const [description, setDescription] = useState(initData.description);
+  const [examples, setExamples] = useState(initData.examples);
   const [exampleInput, setExampleInput] = useState('');
   const [error, setError] = useState(false);
 
@@ -82,22 +71,22 @@ const WishUpdate: () => React$Node = ({ navigation, route, theme }: Props) => {
       }
       newWish.id = newWish.id || res.data.wish_id;
       navigation.navigate('WishList', {
-        update: { itemIndex: index, itemData: newWish },
+        update: {
+          itemIndex: route.params ? route.params.index : null,
+          itemData: newWish,
+        },
       });
     };
 
-    if (data) {
+    if (initData) {
       // Update a wish
-      newWish.id = data.id;
-      put(`/wish/${username}/${data.id}`, newWish).then(callback);
+      newWish.id = initData.id;
+      put(`/wish/${username}/${initData.id}`, newWish).then(callback);
     } else {
       // Add a wish
       post(`/wish/${username}`, newWish).then(callback);
     }
   };
-
-  // Set title depending on update or addition
-  navigation.setOptions({ title });
 
   return (
     <View style={styles.form}>
@@ -142,21 +131,10 @@ const WishUpdate: () => React$Node = ({ navigation, route, theme }: Props) => {
           onPress={exampleInput ? handleExampleAdd : null}
         />
       </View>
-      <View style={styles.chips}>
-        {examples.map((ex, i) => (
-          <Chip
-            key={ex + i}
-            icon="launch"
-            onPress={() => Linking.openURL(examples[i])}
-            onClose={handleExampleRemove(i)}
-            textStyle={{ ...styles.chip, color: theme.colors.primary }}>
-            {ex}
-          </Chip>
-        ))}
-      </View>
+      <UrlList urls={examples} onRemove={handleExampleRemove} />
       <Button onPress={handleValidate}>Valider</Button>
     </View>
   );
 };
 
-export default withTheme(WishUpdate);
+export default WishUpdate;

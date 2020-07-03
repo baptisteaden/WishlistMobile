@@ -12,7 +12,7 @@ This is a mobile app using React Native on the front-end and express for the bac
 Todo list:
 
 - [x] Install and setup react native
-- [x] First connection between the native app & the express API server
+- [x] First connection between <th></th>e native app & the express API server
 - [x] Setup & first connection to an sqlite db
 - [x] Move code in `SignIn.js`
 - [x] Code `Home.js` skeleton = topbar with icons: home, my wishlist, friends
@@ -27,7 +27,11 @@ Todo list:
 - [x] See how people do and try to have a decent server architecture
 - [x] Contexts for username / theme
 - [x] Generic List component + some front-end refactoring
-- [ ] And then... Moving to `Friends.js` I guess? :)
+- [x] And then... Moving to `Friends` I guess? :)
+- [ ] Implement `shopped` and `comment section` features
+      => suppression comment
 
-- [ ] Integrate typescript?
 - [ ] Move from REST to GraphQL + get started with Apollo client!
+- [ ] Integrate typescript?
+- [ ] Secure API (authentication, token, ...)
+- [ ] Notifications on `Home`

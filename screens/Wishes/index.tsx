@@ -24,12 +24,12 @@ const Wishes: () => React$Node = () => {
         <Stack.Screen
           name="WishAdd"
           component={WishUpdate}
-          initialParams={{ title: 'Ajouter un cadeau' }}
+          options={{ title: 'Ajouter un cadeau' }}
         />
         <Stack.Screen
           name="WishUpdate"
           component={WishUpdate}
-          initialParams={{ title: 'Modifier un cadeau' }}
+          options={{ title: 'Modifier un cadeau' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
