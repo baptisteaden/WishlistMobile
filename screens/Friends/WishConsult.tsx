@@ -11,7 +11,7 @@ import {
 } from 'react-native-paper';
 import { post, UserContext } from '../_common/_helpers';
 import UrlList from '../_common/UrlList';
-import CommentList from './CommentList';
+import List from '../_common/List';
 
 const styles = StyleSheet.create({
   container: {
@@ -110,11 +110,15 @@ const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
       <Surface style={styles.surface}>
         <Text>{status}</Text>
         <IconButton icon="cart" />
-        <CommentList
+
+        <List
           route={route}
           navigation={navigation}
-          fetchUrl={`/wish/${id}`}
+          itemDescriptionNumberOfLines={5}
+          canDelete={(listItem) => listItem.name === username}
+          deleteAlertMessage="Supprimer ce commentaire ?"
         />
+
         <View style={styles.newComment}>
           <TextInput
             placeholder="Ajouter un commentaire"

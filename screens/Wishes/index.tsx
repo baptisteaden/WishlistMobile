@@ -17,7 +17,10 @@ const Wishes: () => React$Node = () => {
           name="WishList"
           component={WishList}
           initialParams={{
-            fetchUrl: `/wish/${username}`,
+            fetchUrl: '/wish/',
+            itemFetchUrl: username,
+            itemScreen: 'WishUpdate',
+            addItemScreen: 'WishAdd',
           }}
           options={{ headerShown: false }}
         />

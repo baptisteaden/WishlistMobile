@@ -32,11 +32,6 @@ const List: () => React$Node = ({
   navigation,
   route,
   theme,
-  itemScreen,
-  addItemScreen,
-  showAddButton,
-  itemFetchUrl,
-  itemPropInUrl,
   canDelete,
   deleteAlertMessage,
   itemDescriptionNumberOfLines,
@@ -44,12 +39,18 @@ const List: () => React$Node = ({
   // ---------- States ---------- //
 
   const [listData, setListData] = useState(null);
-  const { fetchUrl } = route.params;
+  const {
+    fetchUrl,
+    itemFetchUrl,
+    itemScreen,
+    itemPropInUrl,
+    addItemScreen,
+  } = route.params;
 
   // ---------- Effects ---------- //
 
   useEffect(() => {
-    get(fetchUrl).then((res) => {
+    get(fetchUrl + itemFetchUrl).then((res) => {
       setListData(res.data);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,9 +82,7 @@ const List: () => React$Node = ({
     navigation.navigate(itemScreen, {
       index,
       data: listItem,
-      fetchUrl: itemFetchUrl
-        ? itemFetchUrl + listItem[itemPropInUrl]
-        : fetchUrl,
+      itemFetchUrl: listItem[itemPropInUrl],
       title: route.params.navTitle
         ? route.params.navTitle + listItem.name
         : route.params.title,
@@ -131,7 +130,7 @@ const List: () => React$Node = ({
         typeof canDelete === 'function' ? canDelete(listItem) : !!canDelete;
 
       return (
-        <React.Fragment key={`${itemScreen}_item_${listItem.id}`}>
+        <React.Fragment key={`listItem_${listItem.id}`}>
           <PaperList.Item
             title={listItem.name}
             description={listItem.description}
@@ -148,7 +147,7 @@ const List: () => React$Node = ({
   return (
     <>
       <ScrollView>{listComponent}</ScrollView>
-      {!showAddButton ? null : (
+      {!addItemScreen ? null : (
         <FAB
           style={{ ...styles.fab, backgroundColor: theme.colors.primary }}
           icon="plus"
