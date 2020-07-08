@@ -75,3 +75,16 @@ exports.destroy = (req, res) => {
     res.json(success());
   });
 };
+
+exports.shop = (req, res) => {
+  const query = `
+    UPDATE wish SET 
+      shoppers = '${req.body.shoppers.join('|')}' 
+    WHERE id = ${req.params.wish_id};
+  `;
+
+  db.run(query, [], (err) => {
+    handleErr(res, err);
+    res.json(success());
+  });
+};

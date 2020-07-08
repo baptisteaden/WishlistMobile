@@ -68,6 +68,7 @@ const List: () => React$Node = ({
         // Handle item addition
         setListData([...listData, itemData]);
       }
+      navigation.setParams({ update: null });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);

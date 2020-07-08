@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { StyleSheet, View, ScrollView, BackHandler } from 'react-native';
 import {
   withTheme,
   Title,
   Paragraph,
   Surface,
+  Subheading,
   TextInput,
   IconButton,
   ActivityIndicator,
@@ -22,9 +23,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
+  shopBar: {
+    flexDirection: 'row',
+    paddingLeft: 15,
+    paddingVertical: 5,
+    backgroundColor: 'transparent',
+  },
+  shopStatus: {
+    width: '80%',
+    alignSelf: 'center',
+  },
+  shopToggle: {},
   newComment: {
     flexDirection: 'row',
-    backgroundColor: 'rgb(231, 231, 231)',
   },
   input: {
     width: '100%',
@@ -45,10 +56,38 @@ const styles = StyleSheet.create({
 });
 
 const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
+  // ---------- States / Contexts / Params ---------- //
+
+  const username = useContext(UserContext);
+  const { id, name, description, examples, shoppers } = route.params.data;
+
   const [comment, setComment] = useState();
   const [fetching, setFetching] = useState(false);
-  const { id, name, description, examples, shoppers } = route.params.data;
-  const username = useContext(UserContext);
+  const [shopped, setShopped] = useState(shoppers.includes(username));
+
+  // ---------- Handlers ---------- //
+
+  const handleShop = async () => {
+    // Shop / unshop
+    const newShoppers = [...shoppers];
+    if (shopped) {
+      newShoppers.splice(newShoppers.indexOf(username), 1);
+    } else {
+      newShoppers.push(username);
+    }
+
+    // Immediate visual changes: cart + shopping status
+    setShopped(!shopped);
+    navigation.setParams({
+      data: { ...route.params.data, shoppers: newShoppers },
+    });
+
+    // Then post
+    const res = await post(`/wish/${id}/shop`, { shoppers: newShoppers });
+    if (res.status === 'error') {
+      console.log(res.message);
+    }
+  };
 
   const handleSendComment = async () => {
     let date = new Date().toISOString().replace('T', ' ');
@@ -68,7 +107,7 @@ const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
     if (res.status === 'error') {
       return console.log(res.message);
     }
-    // Update List params to provoke an item addition
+    // Update params for 'List' to provoke an item addition
     navigation.setParams({
       update: {
         itemData: {
@@ -82,22 +121,36 @@ const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
     setComment('');
   };
 
+  // ---------- Render ---------- //
+
+  // Format shop status message according to 'shoppers'
   let status = "Ce cadeau n'a pas encore été offert";
   if (shoppers.length > 0) {
-    // Format 'shopped by' sentence
-    status = `${shoppers.join(', ')} participent pour ce cadeau !`;
-    const lastCommaIndex = status.lastIndexOf(',');
-    status =
-      status.slice(0, lastCommaIndex) +
-      ' et' +
-      status.slice(lastCommaIndex + 1);
+    // Verb conjugation...
+    let conjug = 'participent';
+    if (shopped) {
+      conjug = 'participez';
+    } else if (shoppers.length === 1) {
+      conjug = 'participe';
+    }
 
-    // Change sentence if username shopped this
-    const usernameRegex = new RegExp(`(, )?(${username})(, )?`);
-    if (usernameRegex.test(status)) {
-      status = status
-        .replace(usernameRegex, '$1vous$3')
-        .replace('participent', 'participez');
+    status = `${shoppers.join(', ')} ${conjug} pour ce cadeau !`;
+
+    // Replace last comma by 'and'
+    if (shoppers.length > 1) {
+      const lastCommaIndex = status.lastIndexOf(',');
+      status =
+        status.slice(0, lastCommaIndex) +
+        ' et' +
+        status.slice(lastCommaIndex + 1);
+    }
+
+    // Change if username is among shoppers
+    if (shopped) {
+      status = status.replace(
+        new RegExp(`(, )?(${username})(, )?`),
+        '$1vous$3',
+      );
     }
   }
 
@@ -108,8 +161,25 @@ const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
       <UrlList urls={examples} />
 
       <Surface style={styles.surface}>
-        <Text>{status}</Text>
-        <IconButton icon="cart" />
+        <View
+          style={{
+            ...styles.shopBar,
+            backgroundColor: `${theme.colors.primary}20`,
+          }}>
+          <Subheading
+            style={{
+              ...styles.shopStatus,
+              color: shoppers.length > 0 ? 'green' : theme.colors.text,
+            }}>
+            {status}
+          </Subheading>
+          <IconButton
+            icon={shopped ? 'cart-off' : 'cart'}
+            onPress={handleShop}
+            color={theme.colors.primary}
+            styles={styles.shopToggle}
+          />
+        </View>
 
         <List
           route={route}

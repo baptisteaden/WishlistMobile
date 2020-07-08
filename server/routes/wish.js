@@ -7,4 +7,6 @@ router.post('/:username', wishController.add);
 router.put('/:username/:wish_id', wishController.update);
 router.delete('/:username/:wish_id', wishController.destroy);
 
+router.post('/:wish_id/shop', wishController.shop);
+
 module.exports = router;
