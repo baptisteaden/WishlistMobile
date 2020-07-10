@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const expressJWT = require('express-jwt');
 const userRouter = require('./routes/user');
@@ -29,6 +30,4 @@ app.use((req, res) => {
   res.status(404).send('<h1>404 Not Found</h1>');
 });
 
-app.listen(4000, () => {
-  console.log('Server running on port 4000');
-});
+module.exports.handler = serverless(app);
