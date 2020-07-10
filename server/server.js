@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressJWT = require('express-jwt');
 const userRouter = require('./routes/user');
 const wishRouter = require('./routes/wish');
 const friendRouter = require('./routes/friend');
@@ -10,6 +12,12 @@ const app = express();
 //middlewares
 app.use(express.static('public'));
 app.use(bodyParser.json());
+app.use(
+  expressJWT({
+    secret: process.env.JWT_SECRET,
+    algorithms: ['HS256'],
+  }).unless({ path: '/user' }),
+);
 
 //routes
 app.use('/user', userRouter);

@@ -32,9 +32,11 @@ Get started todo list:
 
 First real life test todo list:
 
-- [ ] Put server on raspi
+- [x] Authentication (jwt sign/check + authorization header on client)
+- [ ] `server-deploy` branch?
+- [ ] Deploy on netlify
+- [ ] .env file on netlify
 - [ ] Clear db
-- [ ] Authentication
 - [ ] Receive requests from outside not just localhost
 - [ ] Generate apk to install for others
 - [ ] Test with PyTwi
@@ -43,6 +45,7 @@ Future todos:
 
 - [ ] Fix REST urls (currently they don't really make sense)
 - [ ] Move from REST to GraphQL + get started with Apollo client!
+- [ ] AsyncStorage to stay connected
 - [ ] Integrate typescript?
 - [ ] Secure API (authentication, token, ...)
 - [ ] Notifications on `Home`

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Title } from 'react-native-paper';
-import { post } from './_common/_helpers';
+import { post, setJWT } from './_common/_helpers';
 
 const styles = StyleSheet.create({
   title: {
@@ -18,32 +18,33 @@ const SignIn: () => React$Node = ({ onSignIn }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState();
 
+  const handleConnect = async () => {
+    setError();
+    const res = await post('/user', { username, password });
+
+    if (res.status === 'error') {
+      setError(res.message);
+    } else {
+      setJWT(res.data.jwt); // Store token for next requests
+      onSignIn(res.data.username); // Go to another page
+    }
+  };
+
   return (
     <SafeAreaView>
       <Title style={styles.title}>Wishlist mobile</Title>
       <TextInput
         label="Nom d'utilisateur"
         value={username}
-        onChangeText={(text) => setUsername(text)}
+        onChangeText={setUsername}
       />
       <TextInput
         label="Mot de passe"
         secureTextEntry
         value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={setPassword}
       />
-      <Button
-        disabled={!username || !password}
-        onPress={() => {
-          setError();
-          post('/user', { username, password }).then((res) => {
-            if (res.status === 'error') {
-              setError(res.message);
-            } else {
-              onSignIn(res.data.username);
-            }
-          });
-        }}>
+      <Button disabled={!username || !password} onPress={handleConnect}>
         Se connecter
       </Button>
       {!error ? null : <Text style={styles.error}>{error}</Text>}

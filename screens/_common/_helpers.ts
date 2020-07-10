@@ -1,8 +1,13 @@
 import React from 'react';
 
+let _JWT = '';
+
 function fetchApi(route, method = 'GET', body) {
   const params = {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${_JWT}`,
+    },
     method,
     body: JSON.stringify(body),
   };
@@ -16,6 +21,10 @@ function fetchApi(route, method = 'GET', body) {
       alert(err);
       console.log('arrg:', err);
     });
+}
+
+export function setJWT(jwt) {
+  _JWT = jwt;
 }
 
 export function get(route) {

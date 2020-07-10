@@ -6,12 +6,12 @@ import Navigation from './screens/Navigation';
 import { UserContext } from './screens/_common/_helpers';
 
 const App: () => React$Node = () => {
-  const [username, setUsername] = useState('A');
+  const [username, setUsername] = useState('');
 
   return (
     <UserContext.Provider value={username}>
       <PaperProvider>
-        {username == null ? <SignIn onSignIn={setUsername} /> : <Navigation />}
+        {!username ? <SignIn onSignIn={setUsername} /> : <Navigation />}
       </PaperProvider>
     </UserContext.Provider>
   );
