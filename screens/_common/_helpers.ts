@@ -1,12 +1,15 @@
 import React from 'react';
 
-let _JWT = '';
+let JWT = '';
+const API_URL = 'http://192.168.1.11:5000';
+// const API_URL = 'https://wishlist-server8485.herokuapp.com';
+// get('/').then((res) => console.log(res));
 
 function fetchApi(route, method = 'GET', body) {
   const params = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${_JWT}`,
+      Authorization: `Bearer ${JWT}`,
     },
     method,
     body: JSON.stringify(body),
@@ -15,7 +18,7 @@ function fetchApi(route, method = 'GET', body) {
     delete params.body;
   }
 
-  return fetch(`http://192.168.1.11:4000${route}`, params)
+  return fetch(API_URL + route, params)
     .then((res) => res.json())
     .catch((err) => {
       alert(err);
@@ -24,7 +27,7 @@ function fetchApi(route, method = 'GET', body) {
 }
 
 export function setJWT(jwt) {
-  _JWT = jwt;
+  JWT = jwt;
 }
 
 export function get(route) {

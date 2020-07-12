@@ -59,7 +59,7 @@ const List: () => React$Node = ({
   useEffect(() => {
     if (route.params.update) {
       const { itemIndex, itemData } = route.params.update;
-      if (itemIndex) {
+      if (itemIndex != null) {
         // Handle item update
         const newListData = [...listData];
         newListData[itemIndex] = itemData;
