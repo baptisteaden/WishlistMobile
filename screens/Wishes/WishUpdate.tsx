@@ -78,7 +78,7 @@ const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
       });
     };
 
-    if (initData) {
+    if (initData.id) {
       // Update a wish
       newWish.id = initData.id;
       put(`/wish/${username}/${initData.id}`, newWish).then(callback);

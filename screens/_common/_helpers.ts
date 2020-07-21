@@ -1,8 +1,8 @@
 import React from 'react';
 
 let JWT = '';
-const API_URL = 'http://192.168.1.11:5000';
-// const API_URL = 'https://wishlist-server8485.herokuapp.com';
+// const API_URL = 'http://192.168.1.11:5000';
+const API_URL = 'https://wishlist-server8485.herokuapp.com';
 // get('/').then((res) => console.log(res));
 
 function fetchApi(route, method = 'GET', body) {

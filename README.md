@@ -33,17 +33,18 @@ Get started todo list:
 First real life test todo list:
 
 - [x] Authentication (jwt sign/check + authorization header on client)
-- [ ] `server-deploy` branch?
-- [ ] Deploy on netlify
-- [ ] .env file on netlify
-- [ ] Clear db
-- [ ] Receive requests from outside not just localhost
-- [ ] Generate apk to install for others
-- [ ] Test with PyTwi
+- [x] `server-deploy` branch? => No, Heroku custom repo for server
+- [x] Deploy on netlify => No SQLite integration, so bye serverless, hi PaaS
+- [x] .env file on netlify => Heroku but yeah
+- [x] Fill db with nice test data (PyTwi account basically)
+- [x] Receive requests from outside not just localhost => No CORS problems!🤯
+- [x] Generate apk to install for others => it's in `android/app/build/outputs/apk/release`
+- [x] Test with PyTwi => Everything's fine 🙂
 
 Future todos:
 
-- [ ] Fix REST urls (currently they don't really make sense)
+- [x] Real data in db + empty it on github
+- [ ] Fix REST urls (or just move on to GraphQL?)
 - [ ] Move from REST to GraphQL + get started with Apollo client!
 - [ ] AsyncStorage to stay connected
 - [ ] Integrate typescript?
