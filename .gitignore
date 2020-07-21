@@ -2,6 +2,7 @@
 #
 server/.env
 server/.git
+server/wishlist.db
 
 # OSX
 #
