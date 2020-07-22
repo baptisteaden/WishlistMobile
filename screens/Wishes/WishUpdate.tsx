@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
-import { UserContext, put, post } from '../_common/_helpers';
+import { useUserContext, put, post } from '../_common/_helpers';
 import UrlList from '../_common/UrlList';
 
 const styles = StyleSheet.create({
@@ -44,7 +44,7 @@ const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
   const [exampleInput, setExampleInput] = useState('');
   const [error, setError] = useState(false);
 
-  const username = useContext(UserContext);
+  const username = useUserContext();
 
   // ----- Handlers ----- //
 

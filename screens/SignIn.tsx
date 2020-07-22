@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Title } from 'react-native-paper';
-import { post, setJWT } from './_common/_helpers';
+import { post, storeUser } from './_common/_helpers';
 
 const styles = StyleSheet.create({
   title: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const SignIn: () => React$Node = ({ onSignIn }) => {
+const SignIn: () => React$Node = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState();
@@ -25,8 +25,7 @@ const SignIn: () => React$Node = ({ onSignIn }) => {
     if (res.status === 'error') {
       setError(res.message);
     } else {
-      setJWT(res.data.jwt); // Store token for next requests
-      onSignIn(res.data.username); // Go to another page
+      storeUser(username, res.data.jwt);
     }
   };
 

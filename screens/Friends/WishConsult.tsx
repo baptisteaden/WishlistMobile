@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, BackHandler } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import {
   withTheme,
   Title,
@@ -10,7 +10,7 @@ import {
   IconButton,
   ActivityIndicator,
 } from 'react-native-paper';
-import { post, UserContext } from '../_common/_helpers';
+import { post, useUserContext } from '../_common/_helpers';
 import UrlList from '../_common/UrlList';
 import List from '../_common/List';
 
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
   // ---------- States / Contexts / Params ---------- //
 
-  const username = useContext(UserContext);
+  const username = useUserContext();
   const { id, name, description, examples, shoppers } = route.params.data;
 
   const [comment, setComment] = useState();

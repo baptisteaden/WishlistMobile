@@ -6,10 +6,11 @@ const userRouter = require('./routes/user');
 const wishRouter = require('./routes/wish');
 const friendRouter = require('./routes/friend');
 const commentRouter = require('./routes/comment');
+const { error } = require('./_helpers');
 
 const app = express();
 
-//middlewares
+// middlewares
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(
@@ -18,8 +19,15 @@ app.use(
     algorithms: ['HS256'],
   }).unless({ path: ['/', '/user'] }),
 );
+app.use((err, req, res, next) => {
+  if (err) {
+    res.status(err.status).json(err);
+  } else {
+    next();
+  }
+});
 
-//routes
+// routes
 app.get('/', (req, res) => {
   res.json({
     hey: 'Welcome to my wishlist API :)',

@@ -17,15 +17,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
   },
-  fab: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    margin: 15,
-  },
-  fetching: {
-    padding: 10,
-  },
 });
 
 const List: () => React$Node = ({
@@ -122,7 +113,7 @@ const List: () => React$Node = ({
   let listComponent = null;
 
   if (listData == null) {
-    listComponent = <ActivityIndicator animating style={styles.fetching} />;
+    listComponent = <ActivityIndicator animating style={theme.loading} />;
   } else if (listData.length === 0) {
     listComponent = <Text style={styles.p}>Liste vide, pour le moment !</Text>;
   } else {
@@ -150,7 +141,7 @@ const List: () => React$Node = ({
       <ScrollView>{listComponent}</ScrollView>
       {!addItemScreen ? null : (
         <FAB
-          style={{ ...styles.fab, backgroundColor: theme.colors.primary }}
+          style={theme.fab}
           icon="plus"
           onPress={() => {
             navigation.navigate(addItemScreen);

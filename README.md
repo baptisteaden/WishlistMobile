@@ -44,9 +44,9 @@ First real life test todo list:
 Future todos:
 
 - [x] Real data in db + empty it on github
+- [x] AsyncStorage to stay connected + temp logout button
 - [ ] Fix REST urls (or just move on to GraphQL?)
 - [ ] Move from REST to GraphQL + get started with Apollo client!
-- [ ] AsyncStorage to stay connected
 - [ ] Integrate typescript?
 - [ ] Secure API (authentication, token, ...)
 - [ ] Notifications on `Home`

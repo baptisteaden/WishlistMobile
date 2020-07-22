@@ -1,17 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
   HeaderBackButton,
 } from '@react-navigation/stack';
-import { UserContext } from '../_common/_helpers';
+import { useUserContext } from '../_common/_helpers';
 import List from '../_common/List';
 import WishConsult from './WishConsult';
 
 const Stack = createStackNavigator();
 
 const Friends: () => React$Node = () => {
-  const username = useContext(UserContext);
+  const username = useUserContext();
 
   return (
     <NavigationContainer>

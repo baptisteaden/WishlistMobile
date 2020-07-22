@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { UserContext } from '../_common/_helpers';
+import { useUserContext } from '../_common/_helpers';
 import WishList from './WishList';
 import WishUpdate from './WishUpdate';
 
 const Stack = createStackNavigator();
 
 const Wishes: () => React$Node = () => {
-  const username = useContext(UserContext);
+  const username = useUserContext();
 
   return (
     <NavigationContainer>
