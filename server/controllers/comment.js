@@ -13,8 +13,8 @@ exports.get = (req, res) => {
     // Format
     const formattedComments = comments.map(({ id, author, date, text }) => ({
       id,
-      name: author,
-      description: `${date}\n\n${text}`,
+      name: unescape(author),
+      description: `${unescape(date)}\n\n${unescape(text)}`,
     }));
 
     res.json(success(formattedComments));

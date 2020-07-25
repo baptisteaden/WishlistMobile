@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 import { useUserContext, put, post } from '../_common/_helpers';
+import {
+  JsonResponse,
+  WishesStackParamList,
+  NewListItem,
+} from '../_common/_types.d';
 import UrlList from '../_common/UrlList';
 
 const styles = StyleSheet.create({
@@ -26,23 +33,25 @@ const styles = StyleSheet.create({
   },
 });
 
+interface Wish extends NewListItem {
+  examples: string[];
+}
+
 type Props = {
-  navigation: Navigation;
-  route;
-  onListItemUpdate;
+  navigation: StackNavigationProp<WishesStackParamList, 'WishUpdate'>;
+  route: RouteProp<WishesStackParamList, 'WishUpdate'>;
 };
 
-const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
+const WishUpdate: React.FC<Props> = ({ navigation, route }) => {
   // ----- States ----- //
-
-  const initData = route.params
-    ? route.params.data
-    : { name: '', description: '', examples: [] };
-  const [name, setName] = useState(initData.name);
-  const [description, setDescription] = useState(initData.description);
-  const [examples, setExamples] = useState(initData.examples);
-  const [exampleInput, setExampleInput] = useState('');
-  const [error, setError] = useState(false);
+  const { fetchUrl, itemFetchUrl, index, data } = route.params;
+  const [name, setName] = useState<string>(data?.name ?? '');
+  const [description, setDescription] = useState<string>(
+    data?.description ?? '',
+  );
+  const [examples, setExamples] = useState<string[]>(data?.examples ?? []);
+  const [exampleInput, setExampleInput] = useState<string>('');
+  const [error, setError] = useState<boolean>(false);
 
   const username = useUserContext();
 
@@ -53,7 +62,7 @@ const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
     setExampleInput('');
   };
 
-  const handleExampleRemove = (exIndex) => () => {
+  const handleExampleRemove = (exIndex: number) => () => {
     const newExamples = [...examples];
     newExamples.splice(exIndex, 1);
     setExamples(newExamples);
@@ -64,24 +73,26 @@ const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
       return setError(true);
     }
 
-    const newWish = { name, description, examples };
-    const callback = (res) => {
+    const newWish: Wish = { name, description, examples };
+    const callback = (res: JsonResponse) => {
       if (res.status === 'error') {
         return console.log(res.message);
       }
       newWish.id = newWish.id || res.data.wish_id;
       navigation.navigate('WishList', {
+        fetchUrl,
+        itemFetchUrl,
         update: {
-          itemIndex: route.params ? route.params.index : null,
+          itemIndex: index,
           itemData: newWish,
         },
       });
     };
 
-    if (initData.id) {
+    if (data) {
       // Update a wish
-      newWish.id = initData.id;
-      put(`/wish/${username}/${initData.id}`, newWish).then(callback);
+      newWish.id = data.id;
+      put(`/wish/${username}/${data.id}`, newWish).then(callback);
     } else {
       // Add a wish
       post(`/wish/${username}`, newWish).then(callback);
@@ -128,8 +139,9 @@ const WishUpdate: () => React$Node = ({ navigation, route }: Props) => {
         <Button
           contentStyle={styles.addExample}
           icon="plus"
-          onPress={exampleInput ? handleExampleAdd : null}
-        />
+          onPress={exampleInput ? handleExampleAdd : undefined}>
+          {/* Typescript wants that comment xd */}
+        </Button>
       </View>
       <UrlList urls={examples} onRemove={handleExampleRemove} />
       <Button onPress={handleValidate}>Valider</Button>

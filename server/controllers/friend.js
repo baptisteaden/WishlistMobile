@@ -20,7 +20,6 @@ exports.get = (req, res) => {
         }))
       : [];
 
-    console.log('get friends: ', friends);
     res.json(success(friends));
   });
 };

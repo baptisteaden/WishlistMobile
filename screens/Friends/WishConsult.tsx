@@ -10,6 +10,9 @@ import {
   IconButton,
   ActivityIndicator,
 } from 'react-native-paper';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+import { FriendsStackParamList, Theme } from '../_common/_types.d';
 import { post, useUserContext } from '../_common/_helpers';
 import UrlList from '../_common/UrlList';
 import List from '../_common/List';
@@ -55,13 +58,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
+type Props = {
+  navigation: StackNavigationProp<FriendsStackParamList, 'List'>;
+  route: RouteProp<FriendsStackParamList, 'List'>;
+  theme: Theme;
+};
+
+const WishConsult: React.FC<Props> = ({ route, navigation, theme }) => {
   // ---------- States / Contexts / Params ---------- //
 
   const username = useUserContext();
   const { id, name, description, examples, shoppers } = route.params.data;
 
-  const [comment, setComment] = useState();
+  const [comment, setComment] = useState('');
   const [fetching, setFetching] = useState(false);
   const [shopped, setShopped] = useState(shoppers.includes(username));
 
@@ -177,7 +186,7 @@ const WishConsult: () => React$Node = ({ route, navigation, theme }) => {
             icon={shopped ? 'cart-off' : 'cart'}
             onPress={handleShop}
             color={theme.colors.primary}
-            styles={styles.shopToggle}
+            style={styles.shopToggle}
           />
         </View>
 

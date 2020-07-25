@@ -1,17 +1,21 @@
 import React, { useContext } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Alert } from 'react-native';
+import { JsonResponse } from './_types.d';
 
-let JWT = '';
-let setUsername = null;
-// const API_URL = 'http://192.168.1.11:5000';
 const API_URL = 'https://wishlist-server8485.herokuapp.com';
-// get('/').then((res) => console.log(res));
+// const API_URL = 'http://192.168.1.11:5000';
+let JWT: string = '';
+let setUsername = (username: string) => {
+  console.warn(`
+    Unable to set username '${username}': the app has not been initialized
+  `);
+};
 
-export async function initApp(onDisconnect) {
+export async function initApp(onDisconnect: (username: string) => void) {
   setUsername = onDisconnect;
   try {
-    JWT = await AsyncStorage.getItem('jwt');
+    JWT = (await AsyncStorage.getItem('jwt')) ?? '';
     const username = await AsyncStorage.getItem('username');
     setUsername(username ?? '');
   } catch (e) {
@@ -30,8 +34,16 @@ export async function storeUser(username = '', jwt = '') {
   }
 }
 
-async function fetchAPI(route, method = 'GET', body) {
-  let ret = Promise.resolve();
+async function fetchAPI(
+  route: string,
+  method: string = 'GET',
+  body: object | null,
+): Promise<JsonResponse> {
+  let ret: Promise<JsonResponse> = Promise.resolve({
+    status: 'error',
+    message: "Problème lors d'une communication serveur",
+  });
+
   const params = {
     headers: {
       'Content-Type': 'application/json',
@@ -45,12 +57,18 @@ async function fetchAPI(route, method = 'GET', body) {
   }
 
   try {
-    ret = await fetch(API_URL + route, params);
+    console.log(`
+      [fetchAPI] Sending request:
+      route: ${route}
+      params: ${JSON.stringify(params)}
+    `);
+    const jsonRes = await fetch(API_URL + route, params);
 
     // Error cases
-    if (ret.status !== 200) {
-      let message = ret.statusText;
-      if (ret.status === 401) {
+    if (jsonRes.status !== 200 && route !== '/user') {
+      let message = jsonRes.statusText;
+      console.log('meeec', jsonRes, route);
+      if (jsonRes.status === 401) {
         // Token absent/invalid/expired => redirect to login page
         await storeUser();
         message = 'Votre session a expirée. 😨\nVeuillez vous reconnecter !';
@@ -60,7 +78,7 @@ async function fetchAPI(route, method = 'GET', body) {
 
     // OK cases
     else {
-      ret = await ret.json();
+      ret = await jsonRes.json();
     }
   } catch (err) {
     Alert.alert('Oops', err.message);
@@ -70,22 +88,22 @@ async function fetchAPI(route, method = 'GET', body) {
   return ret;
 }
 
-export function get(route) {
+export function get(route: string) {
   return fetchAPI(route, 'GET', null);
 }
 
-export function post(route, body) {
+export function post(route: string, body: object) {
   return fetchAPI(route, 'POST', body);
 }
 
-export function put(route, body) {
+export function put(route: string, body: object) {
   return fetchAPI(route, 'PUT', body);
 }
 
-export function destroy(route, body) {
-  return fetchAPI(route, 'DELETE', body);
+export function destroy(route: string) {
+  return fetchAPI(route, 'DELETE', null);
 }
 
-export const UserContext = React.createContext();
+export const UserContext = React.createContext('');
 
 export const useUserContext = () => useContext(UserContext);

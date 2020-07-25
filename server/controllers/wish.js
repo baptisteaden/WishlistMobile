@@ -11,14 +11,18 @@ exports.get = (req, res) => {
     handleErr(res, err);
 
     // Parse examples and shoppers from string|pipe|separated to array
+    let ret = [];
     if (wishes) {
-      wishes.forEach((wish) => {
-        wish.examples = wish.examples ? wish.examples.split('|') : [];
-        wish.shoppers = wish.shoppers ? wish.shoppers.split('|') : [];
-      });
+      ret = wishes.map(({ id, name, description, examples, shoppers }) => ({
+        id,
+        name: unescape(name),
+        description: unescape(description),
+        examples: examples ? examples.split('|') : [],
+        shoppers: shoppers ? shoppers.split('|') : [],
+      }));
     }
 
-    res.json(success(wishes || []));
+    res.json(success(ret));
   });
 };
 
@@ -60,7 +64,6 @@ exports.update = (req, res) => {
       examples = '${req.body.examples.join('|')}' 
     WHERE id = ${req.params.wish_id};
   `;
-
   db.run(query, [], (err) => {
     handleErr(res, err);
     res.json(success());

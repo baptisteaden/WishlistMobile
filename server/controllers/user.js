@@ -27,7 +27,7 @@ exports.signIn = (req, res) => {
         });
         resContent = success({ ...row, jwt: token });
       } else {
-        res.status(500);
+        res.status(401);
         resContent = error('Utilisateur ou mot de passe incorrect');
       }
 
@@ -35,5 +35,6 @@ exports.signIn = (req, res) => {
     });
   } catch (e) {
     res.status(500).json(error("Problème d'authentification 😨"));
+    console.error(e);
   }
 };

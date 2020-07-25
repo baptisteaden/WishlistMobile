@@ -4,7 +4,7 @@ import Home from './Home';
 import Wishes from './Wishes';
 import Friends from './Friends';
 
-const Navigation: () => React$Node = () => {
+const Navigation: React.FC = () => {
   const [navigationState, setNavigationState] = useState({
     index: 0,
     routes: [
@@ -20,7 +20,7 @@ const Navigation: () => React$Node = () => {
     Friends,
   });
 
-  const handleIndexChange = (index) =>
+  const handleIndexChange = (index: number) =>
     setNavigationState({ ...navigationState, index });
 
   return (

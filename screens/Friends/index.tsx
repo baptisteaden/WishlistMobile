@@ -7,10 +7,15 @@ import {
 import { useUserContext } from '../_common/_helpers';
 import List from '../_common/List';
 import WishConsult from './WishConsult';
+import {
+  PaperRoute,
+  ListItemKey,
+  FriendsStackParamList,
+} from '../_common/_types.d';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<FriendsStackParamList>();
 
-const Friends: () => React$Node = () => {
+const Friends: React.FC<PaperRoute> = () => {
   const username = useUserContext();
 
   return (
@@ -23,7 +28,7 @@ const Friends: () => React$Node = () => {
             fetchUrl: '/friend/',
             itemFetchUrl: username,
             itemScreen: 'FriendWishList',
-            itemPropInUrl: 'name',
+            itemPropInUrl: ListItemKey.name,
             navTitle: 'Liste de ', // Completes param 'title' onClick on a listItem
           }}
           options={{ headerShown: false }}
@@ -35,14 +40,14 @@ const Friends: () => React$Node = () => {
             fetchUrl: '/wish/',
             itemFetchUrl: '', // Set by navigate from FriendList
             itemScreen: 'WishConsult',
-            itemPropInUrl: 'id',
+            itemPropInUrl: ListItemKey.id,
           }}
         />
         <Stack.Screen
           name="WishConsult"
           component={WishConsult}
           options={({ route, navigation }) => ({
-            title: route.params.title,
+            title: route.params!.title,
             headerLeft: () => (
               <HeaderBackButton
                 onPress={() =>

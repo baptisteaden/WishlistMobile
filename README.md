@@ -7,7 +7,7 @@ Small social media centered on gifts you make to your family/friends:
 - People can consult, mark as 'shopped' and write comments on gifts
 - All theses activities are not visible for the person wishing the gifts
 
-This is a mobile app using React Native on the front-end and express for the back-end API. A web app using the same API + Vue.js might also come up later so stay tuned!
+Tools: React Native, Node.js, express, Typescript, sqlite, Heroku, Git
 
 Get started todo list:
 
@@ -45,8 +45,11 @@ Future todos:
 
 - [x] Real data in db + empty it on github
 - [x] AsyncStorage to stay connected + temp logout button
+- [ ] Integrate typescript?
+      => finish client side
+      => try server side...
+      => Heroku integration?
 - [ ] Fix REST urls (or just move on to GraphQL?)
 - [ ] Move from REST to GraphQL + get started with Apollo client!
-- [ ] Integrate typescript?
 - [ ] Secure API (authentication, token, ...)
 - [ ] Notifications on `Home`

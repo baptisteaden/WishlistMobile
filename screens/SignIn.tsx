@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Title } from 'react-native-paper';
 import { post, storeUser } from './_common/_helpers';
+import { JsonResponse } from './_common/_types.d';
 
 const styles = StyleSheet.create({
   title: {
@@ -13,17 +14,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const SignIn: () => React$Node = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState();
+const SignIn: React.FC = () => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const handleConnect = async () => {
-    setError();
+    setError('');
     const res = await post('/user', { username, password });
 
     if (res.status === 'error') {
-      setError(res.message);
+      setError(res.message!);
     } else {
       storeUser(username, res.data.jwt);
     }

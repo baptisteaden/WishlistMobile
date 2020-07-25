@@ -2,8 +2,13 @@ import React from 'react';
 import { Text } from 'react-native';
 import { withTheme, FAB } from 'react-native-paper';
 import { storeUser } from '../_common/_helpers';
+import { PaperRoute, Theme } from '../_common/_types.d';
 
-const Home: () => React$Node = ({ theme }) => {
+interface Props extends PaperRoute {
+  theme: Theme;
+}
+
+const Home: React.FC<Props> = ({ theme }) => {
   const logout = () => storeUser();
 
   return (

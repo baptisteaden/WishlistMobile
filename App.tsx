@@ -8,8 +8,9 @@ import {
 import SignIn from './screens/SignIn';
 import Navigation from './screens/Navigation';
 import { UserContext, initApp } from './screens/_common/_helpers';
+import { Theme } from './screens/_common/_types';
 
-const theme = {
+const theme: Theme = {
   ...DefaultTheme,
   fab: {
     position: 'absolute',
@@ -23,15 +24,15 @@ const theme = {
   },
 };
 
-const App: () => React$Node = () => {
-  const [username, setUsername] = useState(null);
+const App: React.FC = () => {
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     initApp(setUsername);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let screenContent = null;
+  let screenContent: JSX.Element | null = null;
   switch (username) {
     case null:
       screenContent = <ActivityIndicator animating style={theme.loading} />;

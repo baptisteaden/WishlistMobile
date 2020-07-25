@@ -7,6 +7,9 @@ import {
   ActivityIndicator,
   FAB,
 } from 'react-native-paper';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+import { Theme, ListItem, IListStack } from './_types.d';
 import { get, destroy } from './_helpers';
 
 const styles = StyleSheet.create({
@@ -19,7 +22,37 @@ const styles = StyleSheet.create({
   },
 });
 
-const List: () => React$Node = ({
+// ---------- Typing ---------- //
+
+export interface Props {
+  navigation: StackNavigationProp<IListStack, 'List'>;
+  route: RouteProp<IListStack, 'List'>;
+  theme: Theme;
+  canDelete: boolean | ((li: ListItem) => boolean);
+  deleteAlertMessage: string;
+  itemDescriptionNumberOfLines?: number;
+}
+
+// Typing function List + props = 'params' not defined on 'route'.
+// RouteProp is probably not made to support dynamic typing.
+// So to use <List /> component, we need to type the route and navigation with
+// 'List', no matter what screen of the stack is being displayed.
+//
+// export interface Props<
+//   StackParamList extends StackWithListComponent,
+//   ScreenName extends ListScreen
+// > {
+//   navigation: StackNavigationProp<StackParamList, ListScreen>;
+//   route: RouteProp<StackParamList, ScreenName>;
+//   theme: Theme;
+//   canDelete: boolean | ((li: ListItem) => boolean);
+//   deleteAlertMessage: string;
+//   itemDescriptionNumberOfLines?: number;
+// }
+
+// ---------- COMPONENT ---------- //
+
+const List: React.FC<Props> = ({
   navigation,
   route,
   theme,
@@ -29,13 +62,16 @@ const List: () => React$Node = ({
 }) => {
   // ---------- States ---------- //
 
-  const [listData, setListData] = useState(null);
+  const [listData, setListData] = useState<ListItem[] | null>(null);
   const {
     fetchUrl,
     itemFetchUrl,
     itemScreen,
     itemPropInUrl,
     addItemScreen,
+    update,
+    navTitle,
+    title,
   } = route.params;
 
   // ---------- Effects ---------- //
@@ -48,52 +84,50 @@ const List: () => React$Node = ({
   }, []);
 
   useEffect(() => {
-    if (route.params.update) {
-      const { itemIndex, itemData } = route.params.update;
+    if (update) {
+      const { itemIndex, itemData } = update;
+      const newListData: ListItem[] = listData === null ? [] : [...listData];
       if (itemIndex != null) {
         // Handle item update
-        const newListData = [...listData];
         newListData[itemIndex] = itemData;
         setListData(newListData);
       } else {
         // Handle item addition
-        setListData([...listData, itemData]);
+        setListData(newListData.concat(itemData));
       }
-      navigation.setParams({ update: null });
+      navigation.setParams({ update: undefined });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
   // ---------- Handlers ---------- //
 
-  const handleItemPress = (disabled, index, listItem) => () => {
-    if (disabled) {
+  const handleItemPress = (index: number, listItem: ListItem) => () => {
+    if (!itemScreen) {
       return;
     }
 
     navigation.navigate(itemScreen, {
       index,
       data: listItem,
-      itemFetchUrl: listItem[itemPropInUrl],
-      title: route.params.navTitle
-        ? route.params.navTitle + listItem.name
-        : route.params.title,
+      itemFetchUrl: itemPropInUrl ? listItem[itemPropInUrl] : undefined,
+      title: navTitle ? navTitle + listItem.name : title,
     });
   };
 
-  const handleItemDelete = (index, itemId) => () => {
+  const handleItemDelete = (index: number, itemId: string) => () => {
     destroy(`${fetchUrl}/${itemId}`).then((res) => {
       if (res.status === 'error') {
         console.log(res.message);
         return Alert.alert('Oops', res.message);
       }
-      const newListData = [...listData];
+      const newListData = [...listData!];
       newListData.splice(index, 1);
       setListData(newListData);
     });
   };
 
-  const deleteAlert = (index, listItem) => () => {
+  const deleteAlert = (index: number, listItem: ListItem) => () => {
     Alert.alert(
       'Suppression',
       deleteAlertMessage.replace('$(itemName)', listItem.name),
@@ -106,8 +140,8 @@ const List: () => React$Node = ({
 
   // ---------- Render ---------- //
 
-  if (route.params.title) {
-    navigation.setOptions({ title: route.params.title });
+  if (title) {
+    navigation.setOptions({ title });
   }
 
   let listComponent = null;
@@ -117,7 +151,7 @@ const List: () => React$Node = ({
   } else if (listData.length === 0) {
     listComponent = <Text style={styles.p}>Liste vide, pour le moment !</Text>;
   } else {
-    listComponent = listData.map((listItem, index) => {
+    listComponent = listData.map((listItem: ListItem, index: number) => {
       const _canDelete =
         typeof canDelete === 'function' ? canDelete(listItem) : !!canDelete;
 
@@ -126,8 +160,8 @@ const List: () => React$Node = ({
           <PaperList.Item
             title={listItem.name}
             description={listItem.description}
-            onLongPress={_canDelete ? deleteAlert(index, listItem) : null}
-            onPress={handleItemPress(!itemScreen, index, listItem)}
+            onLongPress={_canDelete ? deleteAlert(index, listItem) : undefined}
+            onPress={handleItemPress(index, listItem)}
             descriptionNumberOfLines={itemDescriptionNumberOfLines || 2}
           />
           <Divider />
