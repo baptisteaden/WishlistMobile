@@ -45,11 +45,9 @@ Future todos:
 
 - [x] Real data in db + empty it on github
 - [x] AsyncStorage to stay connected + temp logout button
-- [ ] Integrate typescript?
-      => finish client side
-      => try server side...
-      => Heroku integration?
+- [x] Integrate typescript? => client + server + heroku done!
 - [ ] Fix REST urls (or just move on to GraphQL?)
 - [ ] Move from REST to GraphQL + get started with Apollo client!
-- [ ] Secure API (authentication, token, ...)
-- [ ] Notifications on `Home`
+- [ ] Try and integrate CI tests (Mocha? Jest? etc.)
+- [ ] Move from sqlite to postgres or something
+- [ ] Implement `Home`, search/add/delete friends, ...
