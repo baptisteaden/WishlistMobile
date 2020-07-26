@@ -1,15 +1,10 @@
 import { Theme as PaperTheme } from 'react-native-paper';
+import { IListItem, ListItem } from '../../server';
 
 export interface Theme extends PaperTheme {
   fab: object;
   loading: object;
 }
-
-export type JsonResponse = {
-  status: string;
-  data?: any;
-  message?: string;
-};
 
 // Should be an import from react-native-paper
 export interface PaperRoute {
@@ -29,15 +24,6 @@ export enum ListItemKey {
   id = 'id',
   name = 'name',
   description = 'description',
-}
-
-interface IListItem {
-  name: string;
-  description: string;
-}
-
-export interface ListItem extends IListItem {
-  id: string;
 }
 
 export interface NewListItem extends IListItem {

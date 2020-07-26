@@ -1,22 +1,24 @@
-const db = require('../db');
-const { handleErr, success } = require('../_helpers');
+import { Request, Response } from 'express';
+import { handleErr, success } from '../_helpers';
+import { Wish, DbWish } from '../../index.d';
+import db from '../db';
 
-exports.get = (req, res) => {
+export function get(req: Request, res: Response) {
   const query = `
     SELECT id, name, description, examples, shoppers FROM wish 
     WHERE username = '${req.params.username}';
   `;
 
-  db.all(query, (err, wishes) => {
+  db.all(query, (err, wishes: DbWish[]) => {
     handleErr(res, err);
 
     // Parse examples and shoppers from string|pipe|separated to array
-    let ret = [];
+    let ret: Wish[] = [];
     if (wishes) {
       ret = wishes.map(({ id, name, description, examples, shoppers }) => ({
         id,
         name: unescape(name),
-        description: unescape(description),
+        description: description ? unescape(description) : undefined,
         examples: examples ? examples.split('|') : [],
         shoppers: shoppers ? shoppers.split('|') : [],
       }));
@@ -24,13 +26,13 @@ exports.get = (req, res) => {
 
     res.json(success(ret));
   });
-};
+}
 
-exports.add = (req, res) => {
+export function add(req: Request, res: Response) {
   function getAddedWishId() {
     const query = 'SELECT last_insert_rowid() AS wish_id';
 
-    db.get(query, [], (err, wishId) => {
+    db.get(query, [], (err, wishId: number) => {
       handleErr(res, err);
       res.json(success(wishId));
     });
@@ -54,9 +56,9 @@ exports.add = (req, res) => {
   }
 
   addWish();
-};
+}
 
-exports.update = (req, res) => {
+export function update(req: Request, res: Response) {
   const query = `
     UPDATE wish SET 
       name = '${req.body.name}', 
@@ -68,18 +70,18 @@ exports.update = (req, res) => {
     handleErr(res, err);
     res.json(success());
   });
-};
+}
 
-exports.destroy = (req, res) => {
+export function destroy(req: Request, res: Response) {
   const query = `DELETE FROM wish WHERE id = ${req.params.wish_id};`;
 
   db.run(query, [], (err) => {
     handleErr(res, err);
     res.json(success());
   });
-};
+}
 
-exports.shop = (req, res) => {
+export function shop(req: Request, res: Response) {
   const query = `
     UPDATE wish SET 
       shoppers = '${req.body.shoppers.join('|')}' 
@@ -90,4 +92,4 @@ exports.shop = (req, res) => {
     handleErr(res, err);
     res.json(success());
   });
-};
+}

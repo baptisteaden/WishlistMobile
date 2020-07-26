@@ -1,11 +1,11 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const expressJWT = require('express-jwt');
-const userRouter = require('./routes/user');
-const wishRouter = require('./routes/wish');
-const friendRouter = require('./routes/friend');
-const commentRouter = require('./routes/comment');
+import 'dotenv/config';
+import express, { Request, Response, NextFunction } from 'express';
+import jwt from 'express-jwt';
+import bodyParser from 'body-parser';
+import userRouter from './routes/user';
+import wishRouter from './routes/wish';
+import friendRouter from './routes/friend';
+import commentRouter from './routes/comment';
 
 const app = express();
 
@@ -19,24 +19,31 @@ app.use(bodyParser.json());
 
 // JWT authorization
 app.use(
-  expressJWT({
-    secret: process.env.JWT_SECRET,
+  jwt({
+    secret: process.env.JWT_SECRET!,
     algorithms: ['HS256'],
   }).unless({ path: ['/', '/user'] }),
 );
 
 // JSON Error handler
-app.use((err, req, res, next) => {
-  if (err) {
-    res.status(err.status).json(err);
-    console.log(err);
-  } else {
-    next();
-  }
-});
+app.use(
+  (
+    err: { status: number },
+    _req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (err) {
+      res.status(err.status).json(err);
+      console.log(err);
+    } else {
+      next();
+    }
+  },
+);
 
-// TMP body params esaping (GraphQL incoming)
-app.use((req, res, next) => {
+// TMP body params escaping (GraphQL incoming)
+app.use((req: Request, _res: Response, next: NextFunction) => {
   if (req.body) {
     Object.entries(req.body).forEach(([key, value]) => {
       if (typeof value === 'string') {
@@ -49,7 +56,7 @@ app.use((req, res, next) => {
 
 // ---------- Routes ---------- //
 
-app.get('/', (req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     hey: 'Welcome to my wishlist API :)',
     mode: process.env.NODE_ENV,
@@ -60,7 +67,7 @@ app.use('/wish', wishRouter);
 app.use('/friend', friendRouter);
 app.use('/comment', commentRouter);
 
-app.use((req, res) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).send('<h1>404 Not Found</h1>');
 });
 

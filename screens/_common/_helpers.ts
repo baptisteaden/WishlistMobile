@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Alert } from 'react-native';
-import { JsonResponse } from './_types.d';
+import { JsonResponse } from '../../server/index.d';
 
 const API_URL = 'https://wishlist-server8485.herokuapp.com';
 // const API_URL = 'http://192.168.1.11:5000';

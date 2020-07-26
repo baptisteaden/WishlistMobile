@@ -4,11 +4,8 @@ import { TextInput, Button, HelperText } from 'react-native-paper';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { useUserContext, put, post } from '../_common/_helpers';
-import {
-  JsonResponse,
-  WishesStackParamList,
-  NewListItem,
-} from '../_common/_types.d';
+import { WishesStackParamList, NewListItem } from '../_common/_types.d';
+import { JsonResponse } from '../../server/index.d';
 import UrlList from '../_common/UrlList';
 
 const styles = StyleSheet.create({
@@ -33,7 +30,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface Wish extends NewListItem {
+interface NewWish extends NewListItem {
   examples: string[];
 }
 
@@ -73,7 +70,7 @@ const WishUpdate: React.FC<Props> = ({ navigation, route }) => {
       return setError(true);
     }
 
-    const newWish: Wish = { name, description, examples };
+    const newWish: NewWish = { name, description, examples };
     const callback = (res: JsonResponse) => {
       if (res.status === 'error') {
         return console.log(res.message);

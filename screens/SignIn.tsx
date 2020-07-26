@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Title } from 'react-native-paper';
 import { post, storeUser } from './_common/_helpers';
-import { JsonResponse } from './_common/_types.d';
 
 const styles = StyleSheet.create({
   title: {

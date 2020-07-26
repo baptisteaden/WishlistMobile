@@ -9,7 +9,8 @@ import {
 } from 'react-native-paper';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { Theme, ListItem, IListStack } from './_types.d';
+import { ListItem } from '../../server/index.d';
+import { Theme, IListStack } from './_types.d';
 import { get, destroy } from './_helpers';
 
 const styles = StyleSheet.create({
@@ -115,7 +116,7 @@ const List: React.FC<Props> = ({
     });
   };
 
-  const handleItemDelete = (index: number, itemId: string) => () => {
+  const handleItemDelete = (index: number, itemId: number) => () => {
     destroy(`${fetchUrl}/${itemId}`).then((res) => {
       if (res.status === 'error') {
         console.log(res.message);

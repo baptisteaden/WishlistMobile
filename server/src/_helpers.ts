@@ -1,12 +1,15 @@
-module.exports.success = function (data) {
+import { Response } from 'express';
+import { JsonResponse } from '../index.d';
+
+export function success(data?: any): JsonResponse {
   return { status: 'success', data };
-};
+}
 
-module.exports.error = function (message) {
+export function error(message: string): JsonResponse {
   return { status: 'error', message };
-};
+}
 
-module.exports.handleErr = function (res, err) {
+export function handleErr(res: Response, err: Error | null) {
   if (err) {
     console.log(err);
     res.status(500).json({
@@ -15,4 +18,4 @@ module.exports.handleErr = function (res, err) {
       err,
     });
   }
-};
+}
