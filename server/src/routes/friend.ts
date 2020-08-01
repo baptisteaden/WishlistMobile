@@ -1,10 +1,11 @@
 import express from 'express';
 import { get, add, destroy } from '../controllers/friend';
 
-const friendRouter = express.Router();
+// Route: /user/:username/friend
+const friendRouter = express.Router({ mergeParams: true });
 
-friendRouter.get('/:username', get);
-friendRouter.post('/:username', add);
-friendRouter.delete('/:username/:friend_name', destroy);
+friendRouter.get('/', get);
+friendRouter.post('/', add);
+friendRouter.delete('/:friend_name', destroy);
 
 export default friendRouter;

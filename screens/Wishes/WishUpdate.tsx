@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { useUserContext, put, post } from '../_common/_helpers';
+import { put, post } from '../_common/_helpers';
 import { WishesStackParamList, NewListItem } from '../_common/_types.d';
 import { JsonResponse } from '../../server/index.d';
 import UrlList from '../_common/UrlList';
@@ -41,7 +41,7 @@ type Props = {
 
 const WishUpdate: React.FC<Props> = ({ navigation, route }) => {
   // ----- States ----- //
-  const { fetchUrl, itemFetchUrl, index, data } = route.params;
+  const { fetchUrl, index, data } = route.params;
   const [name, setName] = useState<string>(data?.name ?? '');
   const [description, setDescription] = useState<string>(
     data?.description ?? '',
@@ -49,8 +49,6 @@ const WishUpdate: React.FC<Props> = ({ navigation, route }) => {
   const [examples, setExamples] = useState<string[]>(data?.examples ?? []);
   const [exampleInput, setExampleInput] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
-
-  const username = useUserContext();
 
   // ----- Handlers ----- //
 
@@ -65,34 +63,34 @@ const WishUpdate: React.FC<Props> = ({ navigation, route }) => {
     setExamples(newExamples);
   };
 
-  const handleValidate = () => {
+  const handleValidate = async () => {
     if (!name) {
       return setError(true);
     }
 
     const newWish: NewWish = { name, description, examples };
-    const callback = (res: JsonResponse) => {
-      if (res.status === 'error') {
-        return console.log(res.message);
-      }
-      newWish.id = newWish.id || res.data.wish_id;
+    let res: JsonResponse | null = null;
+
+    if (data) {
+      // Update a wish
+      newWish.id = data.id;
+      res = await put(`${fetchUrl}/${data.id}`, newWish);
+    } else {
+      // Add a wish
+      res = await post(fetchUrl, newWish);
+    }
+
+    if (res.status === 'error') {
+      console.log(res.message);
+    } else {
+      newWish.id = newWish.id ?? res.data.wish_id;
       navigation.navigate('WishList', {
         fetchUrl,
-        itemFetchUrl,
         update: {
           itemIndex: index,
           itemData: newWish,
         },
       });
-    };
-
-    if (data) {
-      // Update a wish
-      newWish.id = data.id;
-      put(`/wish/${username}/${data.id}`, newWish).then(callback);
-    } else {
-      // Add a wish
-      post(`/wish/${username}`, newWish).then(callback);
     }
   };
 

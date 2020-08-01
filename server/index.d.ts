@@ -25,7 +25,7 @@ export interface DbWish extends ListItem {
 
 export interface Comment {
   id?: number;
-  wish_id: id;
+  wish_id: number;
   author: string;
   text: string;
   date: string;

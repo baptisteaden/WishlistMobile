@@ -10,7 +10,7 @@ import {
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { ListItem } from '../../server/index.d';
-import { Theme, IListStack } from './_types.d';
+import { Theme, IListStack, NewListParams } from './_types.d';
 import { get, destroy } from './_helpers';
 
 const styles = StyleSheet.create({
@@ -71,14 +71,14 @@ const List: React.FC<Props> = ({
     itemPropInUrl,
     addItemScreen,
     update,
-    navTitle,
+    itemScreenTitle,
     title,
   } = route.params;
 
   // ---------- Effects ---------- //
 
   useEffect(() => {
-    get(fetchUrl + itemFetchUrl).then((res) => {
+    get(fetchUrl).then((res) => {
       setListData(res.data);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -108,12 +108,18 @@ const List: React.FC<Props> = ({
       return;
     }
 
-    navigation.navigate(itemScreen, {
+    const params: NewListParams = {
       index,
       data: listItem,
-      itemFetchUrl: itemPropInUrl ? listItem[itemPropInUrl] : undefined,
-      title: navTitle ? navTitle + listItem.name : title,
-    });
+      title: itemScreenTitle ? itemScreenTitle + listItem.name : title,
+    };
+
+    if (itemFetchUrl && itemPropInUrl) {
+      const item = listItem[itemPropInUrl].toString(); // id is a number
+      params.fetchUrl = itemFetchUrl.replace('$item', item);
+    }
+
+    navigation.navigate(itemScreen, params);
   };
 
   const handleItemDelete = (index: number, itemId: number) => () => {
@@ -153,15 +159,19 @@ const List: React.FC<Props> = ({
     listComponent = <Text style={styles.p}>Liste vide, pour le moment !</Text>;
   } else {
     listComponent = listData.map((listItem: ListItem, index: number) => {
-      const _canDelete =
+      const tmpCanDelete =
         typeof canDelete === 'function' ? canDelete(listItem) : !!canDelete;
+
+      const handleLongPress = tmpCanDelete
+        ? deleteAlert(index, listItem)
+        : undefined;
 
       return (
         <React.Fragment key={`listItem_${listItem.id}`}>
           <PaperList.Item
             title={listItem.name}
             description={listItem.description}
-            onLongPress={_canDelete ? deleteAlert(index, listItem) : undefined}
+            onLongPress={handleLongPress}
             onPress={handleItemPress(index, listItem)}
             descriptionNumberOfLines={itemDescriptionNumberOfLines || 2}
           />

@@ -1,5 +1,5 @@
 import { Theme as PaperTheme } from 'react-native-paper';
-import { IListItem, ListItem } from '../../server';
+import { IListItem } from '../../server/index.d';
 
 export interface Theme extends PaperTheme {
   fab: object;
@@ -20,10 +20,9 @@ export interface PaperRoute {
   jumpTo: (key: string) => void;
 }
 
-export enum ListItemKey {
+export enum ItemPropInUrl {
   id = 'id',
   name = 'name',
-  description = 'description',
 }
 
 export interface NewListItem extends IListItem {
@@ -38,13 +37,12 @@ export interface NewListItem extends IListItem {
 //   WishConsult = 'WishConsult',
 // }
 
-type ListParams = {
-  fetchUrl: string;
-  itemFetchUrl: string;
+interface IListParams {
+  itemFetchUrl?: string;
   itemScreen?: keyof IListStack;
   addItemScreen?: keyof IListStack;
-  itemPropInUrl?: keyof ListItem;
-  navTitle?: string;
+  itemPropInUrl?: ItemPropInUrl;
+  itemScreenTitle?: string;
   title?: string;
   update?: {
     itemIndex?: number;
@@ -52,7 +50,15 @@ type ListParams = {
   };
   data?: any;
   index?: number;
-};
+}
+
+interface ListParams extends IListParams {
+  fetchUrl: string;
+}
+
+export interface NewListParams extends IListParams {
+  fetchUrl?: string;
+}
 
 // A fake stack param list to be able to use RouteProp in <List /> component.
 // More info there...

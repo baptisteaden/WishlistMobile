@@ -1,10 +1,11 @@
 import express from 'express';
 import { get, add, destroy } from '../controllers/comment';
 
-const commentRouter = express.Router();
+// Route: /user/:username/wish/:wish_id/comment
+const commentRouter = express.Router({ mergeParams: true });
 
-commentRouter.get('/:wish_id', get);
-commentRouter.post('/:wish_id', add);
+commentRouter.get('/', get);
+commentRouter.post('/', add);
 commentRouter.delete('/:comment_id', destroy);
 
 export default commentRouter;

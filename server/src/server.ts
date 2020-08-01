@@ -62,10 +62,10 @@ app.get('/', (_req: Request, res: Response) => {
     mode: process.env.NODE_ENV,
   });
 });
+userRouter.use('/:username/friend', friendRouter);
+userRouter.use('/:username/wish', wishRouter);
+wishRouter.use('/:wish_id/comment', commentRouter);
 app.use('/user', userRouter);
-app.use('/wish', wishRouter);
-app.use('/friend', friendRouter);
-app.use('/comment', commentRouter);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).send('<h1>404 Not Found</h1>');

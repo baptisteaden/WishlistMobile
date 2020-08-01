@@ -46,7 +46,7 @@ Future todos:
 - [x] Real data in db + empty it on github
 - [x] AsyncStorage to stay connected + temp logout button
 - [x] Integrate typescript? => client + server + heroku done!
-- [ ] Fix REST urls (or just move on to GraphQL?)
+- [x] Fix REST urls (or just move on to GraphQL?) => fixed URLs + REST branch
 - [ ] Move from REST to GraphQL + get started with Apollo client!
 - [ ] Try and integrate CI tests (Mocha? Jest? etc.)
 - [ ] Move from sqlite to postgres or something

@@ -16,6 +16,7 @@ import { FriendsStackParamList, Theme } from '../_common/_types.d';
 import { post, useUserContext } from '../_common/_helpers';
 import UrlList from '../_common/UrlList';
 import List from '../_common/List';
+import { Comment } from '../../server/index.d';
 
 const styles = StyleSheet.create({
   container: {
@@ -92,7 +93,9 @@ const WishConsult: React.FC<Props> = ({ route, navigation, theme }) => {
     });
 
     // Then post
-    const res = await post(`/wish/${id}/shop`, { shoppers: newShoppers });
+    const res = await post(`/user/${username}/wish/${id}/shop`, {
+      shoppers: newShoppers,
+    });
     if (res.status === 'error') {
       console.log(res.message);
     }
@@ -102,7 +105,7 @@ const WishConsult: React.FC<Props> = ({ route, navigation, theme }) => {
     let date = new Date().toISOString().replace('T', ' ');
     date = date.slice(0, date.lastIndexOf(':'));
 
-    const newComment = {
+    const newComment: Comment = {
       wish_id: id,
       author: username,
       text: comment,
@@ -110,7 +113,7 @@ const WishConsult: React.FC<Props> = ({ route, navigation, theme }) => {
     };
 
     setFetching(true);
-    const res = await post(`/comment/${id}`, newComment);
+    const res = await post(route.params.fetchUrl, newComment);
     setFetching(false);
 
     if (res.status === 'error') {

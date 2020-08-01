@@ -11,11 +11,8 @@ const Stack = createStackNavigator<WishesStackParamList>();
 const Wishes: React.FC<PaperRoute> = () => {
   const username = useUserContext();
 
-  // In WishAdd and WishUpdate, only used to pass data back to WishList, because
-  // typescript doesn't care about the 'initialParams' shallow merge, apparently.
   const initialParams = {
-    fetchUrl: '/wish/',
-    itemFetchUrl: username,
+    fetchUrl: `/user/${username}/wish`,
   };
 
   return (
