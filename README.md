@@ -47,7 +47,4 @@ Future todos:
 - [x] AsyncStorage to stay connected + temp logout button
 - [x] Integrate typescript? => client + server + heroku done!
 - [x] Fix REST urls (or just move on to GraphQL?) => fixed URLs + REST branch
-- [ ] Move from REST to GraphQL + get started with Apollo client!
-- [ ] Try and integrate CI tests (Mocha? Jest? etc.)
-- [ ] Move from sqlite to postgres or something
-- [ ] Implement `Home`, search/add/delete friends, ...
+      => This branch will stay like that, with a REST API. It is just for me to compare REST vs GraphQL implementation in `master`, see if one is better for this project etc...
